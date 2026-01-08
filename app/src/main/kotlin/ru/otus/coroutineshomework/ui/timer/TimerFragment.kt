@@ -74,12 +74,23 @@ class TimerFragment : Fragment() {
         outState.putBoolean(STARTED, started)
     }
 
+    private var timerJob: Job? = null
+
     private fun startTimer() {
-        // TODO: Start timer
+        timerJob?.cancel()
+        timerJob = viewLifecycleOwner.lifecycleScope.launch {
+            val startTimestamp = System.currentTimeMillis() - time.inWholeMilliseconds
+
+            while (isActive) {
+                val currentTimestamp = System.currentTimeMillis()
+                time = (currentTimestamp - startTimestamp).milliseconds
+                delay(10)
+            }
+        }
     }
 
     private fun stopTimer() {
-        // TODO: Stop timer
+        timerJob?.cancel()
     }
 
     override fun onDestroyView() {
